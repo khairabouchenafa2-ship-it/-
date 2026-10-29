@@ -1,0 +1,6 @@
+{
+  "name": "بطل الإعراب - السنة الثالثة ابتدائي",
+  "description": "وحدة تعليمية تفاعلية وقصصية مبسطة لتعليم الإعراب وتطبيقات الفاعل والمفعول به لتلاميذ السنة الثالثة ابتدائي مع أنشطة وبنك تمارين.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
