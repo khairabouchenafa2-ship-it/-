@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Volume2, Eye, EyeOff, Sparkles, ArrowRight, CheckCircle2, HelpCircle } from 'lucide-react';
+import { Volume2, Eye, EyeOff, Sparkles, ArrowRight } from 'lucide-react';
 import { PARSED_EXAMPLES } from '../data/curriculumData';
 import { MascotMessage } from './MascotMessage';
+import { VocalizedWord } from './VocalizedWord';
 import { sounds, speakArabic } from '../utils/audio';
 
 interface ParsingExamplesProps {
   onGoToQuiz: () => void;
-  onEarnStar: () => void;
+  onEarnStar: (rewardId?: string) => void;
 }
 
 export const ParsingExamples: React.FC<ParsingExamplesProps> = ({ onGoToQuiz, onEarnStar }) => {
@@ -55,7 +56,7 @@ export const ParsingExamples: React.FC<ParsingExamplesProps> = ({ onGoToQuiz, on
     <div className="space-y-8 animate-fadeIn">
       {/* Mascot Intro */}
       <MascotMessage
-        message="هَيَّا بِنَا إِلَى المَيْدَانِ العَمَلِيِّ! لَدَيْنَا هُنَا 5 أَمْثِلَةٍ مَشْكُولَةٍ بِعِنَايَةٍ فَائِقَةٍ، مَعْرُوبَةٍ إِعْرَاباً كَامِلاً وَمُبَسَّطاً!"
+        message="هَيَّا بِنَا إِلَى المَيْدَانِ العَمَلِيِّ! لَدَيْنَا هُنَا 5 أَمْثِلَةٍ مَشْكُولَةٍ بِعِنَايَةٍ فَائِقَةٍ، مُعْرَبَةٍ إِعْرَاباً كَامِلاً وَمُبَسَّطاً!"
         subtext="انْقُرْ عَلَى أَيِّ كَلِمَةٍ فِي الجُمْلَةِ لِتَكْتَشِفَ سِرَّهَا، أَوْ جَرِّبْ إِخْفَاءَ الإِعْرَابِ لِتَخْتَبِرَ ذَكَاءَكَ قَبْلَ كَشْفِ الحَلِّ!"
         variant="amber"
         emotion="happy"
@@ -155,7 +156,18 @@ export const ParsingExamples: React.FC<ParsingExamplesProps> = ({ onGoToQuiz, on
                       : 'border-stone-200 bg-stone-50/70 hover:bg-white hover:border-amber-300'
                   }`}
                 >
-                  <span className="text-2xl font-black mb-1">{w.vocalized}</span>
+                  <span className="text-2xl font-black mb-1">
+                    <VocalizedWord
+                      word={w.vocalized}
+                      highlightClassName={
+                        w.color === 'amber'
+                          ? 'text-amber-700'
+                          : w.color === 'sky'
+                          ? 'text-sky-700'
+                          : 'text-emerald-700'
+                      }
+                    />
+                  </span>
                   <span className={`text-[11px] font-black px-2 py-0.5 rounded-full border ${getRoleBadgeColor(w.color)}`}>
                     {w.role}
                   </span>
@@ -195,9 +207,10 @@ export const ParsingExamples: React.FC<ParsingExamplesProps> = ({ onGoToQuiz, on
             <button
               onClick={() => {
                 toggleHide(currentExample.id);
-                onEarnStar();
+                sounds.playCorrect();
+                onEarnStar(`example-challenge-${currentExample.id}`);
               }}
-              className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-sm shadow-sm transition-all"
+              className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-sm shadow-sm transition-all cursor-pointer"
             >
               كَشْفُ الإِعْرَابِ النَّمُوذَجِيِّ وَالتَّأَكُّدِ مِنَ الحَلِّ ✨
             </button>
@@ -231,7 +244,10 @@ export const ParsingExamples: React.FC<ParsingExamplesProps> = ({ onGoToQuiz, on
                   >
                     <td className="p-3.5 font-black text-lg text-amber-950 align-top">
                       <div className="flex items-center gap-1.5">
-                        <span>{w.vocalized}</span>
+                        <VocalizedWord
+                          word={w.vocalized}
+                          highlightClassName="text-rose-600"
+                        />
                         <button
                           onClick={() => {
                             sounds.playClick();
@@ -268,7 +284,7 @@ export const ParsingExamples: React.FC<ParsingExamplesProps> = ({ onGoToQuiz, on
             sounds.playClick();
             onGoToQuiz();
           }}
-          className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-base md:text-lg shadow-md hover:shadow-lg transition-all cursor-pointer hover:scale-102"
+          className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-base md:text-lg shadow-md hover:shadow-lg transition-all cursor-pointer hover:scale-[1.02]"
         >
           <span>تَقَدَّمْ إِلَى بَنْكِ التَّمَارِينِ وَالتَّطْبِيقَاتِ التَّفَاعُلِيَّةِ</span>
           <ArrowRight size={20} className="rotate-180" />

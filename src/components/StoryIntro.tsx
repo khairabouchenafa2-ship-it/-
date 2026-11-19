@@ -1,66 +1,63 @@
-import React, { useState } from 'react';
-import { Sparkles, CheckCircle2, HelpCircle, ArrowRight, Play, BookOpen } from 'lucide-react';
+import React from 'react';
+import { Sparkles, ArrowRight } from 'lucide-react';
 import { STORY_CHARACTERS, SENTENCE_TYPES_DATA } from '../data/curriculumData';
 import { MascotMessage } from './MascotMessage';
 import { sounds, speakArabic } from '../utils/audio';
 
 interface StoryIntroProps {
   onGoToLessons: () => void;
-  onEarnStar: () => void;
+  onEarnStar: (rewardId?: string) => void;
+  wordChoices: Record<number, 'اسم' | 'فعل' | 'حرف'>;
+  onSelectWordChoice: (idx: number, type: 'اسم' | 'فعل' | 'حرف') => void;
+  sentenceChoice: 'فعلية' | 'اسمية' | null;
+  onSelectSentenceChoice: (type: 'فعلية' | 'اسمية') => void;
 }
 
-export const StoryIntro: React.FC<StoryIntroProps> = ({ onGoToLessons, onEarnStar }) => {
-  // Mini interactive check
-  const [selectedWordTest, setSelectedWordTest] = useState<{
-    word: string;
-    correctType: 'اسم' | 'فعل' | 'حرف';
-    chosenType: string | null;
-    isCorrect: boolean | null;
-  }[]>([
-    { word: 'يَجْرِي', correctType: 'فعل', chosenType: null, isCorrect: null },
-    { word: 'المَدْرَسَةُ', correctType: 'اسم', chosenType: null, isCorrect: null },
-    { word: 'فِي', correctType: 'حرف', chosenType: null, isCorrect: null },
-  ]);
+const WORD_TESTS: { word: string; correctType: 'اسم' | 'فعل' | 'حرف' }[] = [
+  { word: 'يَجْرِي', correctType: 'فعل' },
+  { word: 'المَدْرَسَةُ', correctType: 'اسم' },
+  { word: 'فِي', correctType: 'حرف' },
+];
 
-  const [sentenceTest, setSentenceTest] = useState<{
-    sentence: string;
-    correctType: 'فعلية' | 'اسمية';
-    chosen: string | null;
-  }>({
-    sentence: 'أَشْرَقَتِ الشَّمْسُ بِالدِّفْءِ.',
-    correctType: 'فعلية',
-    chosen: null,
-  });
+const SENTENCE_TEST = {
+  sentence: 'أَشْرَقَتِ الشَّمْسُ بِالدِّفْءِ.',
+  correctType: 'فعلية' as const,
+};
 
+export const StoryIntro: React.FC<StoryIntroProps> = ({
+  onGoToLessons,
+  onEarnStar,
+  wordChoices,
+  onSelectWordChoice,
+  sentenceChoice,
+  onSelectSentenceChoice,
+}) => {
   const handleTestWord = (idx: number, type: 'اسم' | 'فعل' | 'حرف') => {
+    const item = WORD_TESTS[idx];
+    if (wordChoices[idx] === item.correctType) return; // already solved correctly
+
     sounds.playClick();
-    const item = selectedWordTest[idx];
     const isCorrect = item.correctType === type;
     if (isCorrect) {
       sounds.playCorrect();
-      onEarnStar();
+      onEarnStar(`intro-word-${idx}`);
     } else {
       sounds.playWrong();
     }
-
-    const updated = [...selectedWordTest];
-    updated[idx] = {
-      ...item,
-      chosenType: type,
-      isCorrect,
-    };
-    setSelectedWordTest(updated);
+    onSelectWordChoice(idx, type);
   };
 
   const handleSentenceTest = (type: 'فعلية' | 'اسمية') => {
+    if (sentenceChoice === SENTENCE_TEST.correctType) return; // already solved correctly
+
     sounds.playClick();
-    if (sentenceTest.correctType === type) {
+    if (SENTENCE_TEST.correctType === type) {
       sounds.playCorrect();
-      onEarnStar();
+      onEarnStar('intro-sentence');
     } else {
       sounds.playWrong();
     }
-    setSentenceTest({ ...sentenceTest, chosen: type });
+    onSelectSentenceChoice(type);
   };
 
   return (
@@ -169,51 +166,56 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({ onGoToLessons, onEarnSta
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {selectedWordTest.map((item, idx) => (
-            <div
-              key={item.word}
-              className="p-4 rounded-2xl bg-stone-50 border-2 border-stone-200 text-center space-y-3"
-            >
-              <div className="text-2xl font-black text-amber-950 py-1 bg-white rounded-xl shadow-xs border border-stone-200">
-                {item.word}
-              </div>
-
-              <div className="flex justify-center gap-1.5">
-                {(['اسم', 'فعل', 'حرف'] as const).map((type) => {
-                  const isSelected = item.chosenType === type;
-                  return (
-                    <button
-                      key={type}
-                      onClick={() => handleTestWord(idx, type)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                        isSelected
-                          ? item.isCorrect
-                            ? 'bg-emerald-600 text-white shadow-xs'
-                            : 'bg-rose-500 text-white'
-                          : 'bg-white hover:bg-stone-100 text-stone-800 border border-stone-300'
-                      }`}
-                    >
-                      {type}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {item.isCorrect !== null && (
-                <div
-                  className={`text-xs font-black px-2 py-1 rounded-lg ${
-                    item.isCorrect
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : 'bg-rose-100 text-rose-800'
-                  }`}
-                >
-                  {item.isCorrect
-                    ? '🎉 أَحْسَنْتَ! إِجَابَةٌ صَحِيحَةٌ!'
-                    : `حَاوِلْ مَرَّةً أُخْرَى! الصَّوَابُ: ${item.correctType}`}
+          {WORD_TESTS.map((item, idx) => {
+            const chosenType = wordChoices[idx] || null;
+            const isCorrect = chosenType ? chosenType === item.correctType : null;
+            return (
+              <div
+                key={item.word}
+                className="p-4 rounded-2xl bg-stone-50 border-2 border-stone-200 text-center space-y-3"
+              >
+                <div className="text-2xl font-black text-amber-950 py-1 bg-white rounded-xl shadow-xs border border-stone-200">
+                  {item.word}
                 </div>
-              )}
-            </div>
-          ))}
+
+                <div className="flex justify-center gap-1.5">
+                  {(['اسم', 'فعل', 'حرف'] as const).map((type) => {
+                    const isSelected = chosenType === type;
+                    return (
+                      <button
+                        key={type}
+                        disabled={isCorrect === true}
+                        onClick={() => handleTestWord(idx, type)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                          isSelected
+                            ? isCorrect
+                              ? 'bg-emerald-600 text-white shadow-xs'
+                              : 'bg-rose-500 text-white'
+                            : 'bg-white hover:bg-stone-100 text-stone-800 border border-stone-300'
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {isCorrect !== null && (
+                  <div
+                    className={`text-xs font-black px-2 py-1 rounded-lg ${
+                      isCorrect
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-rose-100 text-rose-800'
+                    }`}
+                  >
+                    {isCorrect
+                      ? '🎉 أَحْسَنْتَ! إِجَابَةٌ صَحِيحَةٌ!'
+                      : `حَاوِلْ مَرَّةً أُخْرَى! جَرِّبْ أَنْ تَمْنَحَ الكَلِمَةَ (الـ) أَوْ تَرْبِطَهَا بِالزَّمَنِ.`}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -306,16 +308,17 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({ onGoToLessons, onEarnSta
             <div>
               <span className="text-xs font-bold text-stone-600">اخْتَبِرْ نَفْسَكَ:</span>
               <p className="text-base font-black text-stone-900">
-                «{sentenceTest.sentence}»
+                «{SENTENCE_TEST.sentence}»
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
+              disabled={sentenceChoice === SENTENCE_TEST.correctType}
               onClick={() => handleSentenceTest('فعلية')}
               className={`px-3.5 py-1.5 rounded-xl font-black text-xs md:text-sm transition-all cursor-pointer ${
-                sentenceTest.chosen === 'فعلية'
+                sentenceChoice === 'فعلية'
                   ? 'bg-emerald-600 text-white shadow-sm'
                   : 'bg-white hover:bg-emerald-50 text-emerald-950 border border-emerald-300'
               }`}
@@ -323,9 +326,10 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({ onGoToLessons, onEarnSta
               جُمْلَةٌ فِعْلِيَّةٌ
             </button>
             <button
+              disabled={sentenceChoice === SENTENCE_TEST.correctType}
               onClick={() => handleSentenceTest('اسمية')}
               className={`px-3.5 py-1.5 rounded-xl font-black text-xs md:text-sm transition-all cursor-pointer ${
-                sentenceTest.chosen === 'اسمية'
+                sentenceChoice === 'اسمية'
                   ? 'bg-rose-600 text-white'
                   : 'bg-white hover:bg-blue-50 text-blue-950 border border-blue-300'
               }`}
@@ -335,17 +339,17 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({ onGoToLessons, onEarnSta
           </div>
         </div>
 
-        {sentenceTest.chosen && (
+        {sentenceChoice && (
           <div
             className={`p-3 rounded-xl text-center text-sm font-black ${
-              sentenceTest.chosen === sentenceTest.correctType
+              sentenceChoice === SENTENCE_TEST.correctType
                 ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
                 : 'bg-rose-100 text-rose-900 border border-rose-300'
             }`}
           >
-            {sentenceTest.chosen === sentenceTest.correctType
+            {sentenceChoice === SENTENCE_TEST.correctType
               ? '🎉 رَائِعٌ جِدّاً! تَبْدَأُ بِـ (أَشْرَقَتْ) وَهُوَ فِعْلٌ، إِذَنْ فَهِيَ جُمْلَةٌ فِعْلِيَّةٌ!'
-              : '❌ انْتَبِهْ: كَلِمَةُ «أَشْرَقَتْ» تَدُلُّ عَلَى حَرَكَةٍ وَعَمَلٍ فَهِيَ فِعْلٌ، لِذَلِكَ الجُمْلَةُ فِعْلِيَّةٌ.'}
+              : '❌ انْتَبِهْ: انْظُرْ إِلَى الكَلِمَةِ الأُولَى «أَشْرَقَتْ»، هَلْ تَدُلُّ عَلَى حَرَكَةٍ فِي زَمَنٍ أَمْ عَلَى اسْمٍ؟ حَاوِلْ ثَانِيَةً!'}
           </div>
         )}
       </div>
@@ -357,7 +361,7 @@ export const StoryIntro: React.FC<StoryIntroProps> = ({ onGoToLessons, onEarnSta
             sounds.playClick();
             onGoToLessons();
           }}
-          className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-black text-base md:text-lg shadow-md hover:shadow-lg transition-all cursor-pointer hover:scale-102"
+          className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-black text-base md:text-lg shadow-md hover:shadow-lg transition-all cursor-pointer hover:scale-[1.02]"
         >
           <span>تَقَدَّمْ إِلَى دُرُوسِ الإِعْرَابِ (الفَاعِلُ وَالمَفْعُولُ بِهِ)</span>
           <ArrowRight size={20} className="rotate-180" />

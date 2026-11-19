@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  BookOpen,
   Search,
   Volume2,
   Sparkles,
@@ -9,18 +8,19 @@ import {
   CheckCircle2,
   Bookmark,
   Crown,
-  Target,
 } from 'lucide-react';
 import { GRAMMAR_DICTIONARY_TERMS } from '../data/curriculumData';
 import { DictionaryTerm } from '../types';
 import { sounds, speakArabic } from '../utils/audio';
 
 interface LittleGrammarDictionaryProps {
-  onEarnStar?: () => void;
+  onDictionaryLookup?: (termId: string) => void;
+  lookedUpDictionaryIds?: string[];
 }
 
 export const LittleGrammarDictionary: React.FC<LittleGrammarDictionaryProps> = ({
-  onEarnStar,
+  onDictionaryLookup,
+  lookedUpDictionaryIds = [],
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'core' | 'parts' | 'cases'>(
@@ -59,10 +59,16 @@ export const LittleGrammarDictionary: React.FC<LittleGrammarDictionaryProps> = (
     filteredTerms[0] ||
     GRAMMAR_DICTIONARY_TERMS[0];
 
+  const handleSelectTerm = (termId: string) => {
+    sounds.playClick();
+    setActiveTermId(termId);
+    onDictionaryLookup?.(termId);
+  };
+
   const handleSpeakTerm = (term: DictionaryTerm) => {
     sounds.playClick();
     speakArabic(`${term.term}. ${term.shortDefinition}. ${term.childTip}`);
-    if (onEarnStar) onEarnStar();
+    onDictionaryLookup?.(term.id);
   };
 
   const getCardBorder = (color: string) => {
@@ -187,16 +193,14 @@ export const LittleGrammarDictionary: React.FC<LittleGrammarDictionaryProps> = (
         <div className="lg:col-span-5 space-y-2.5 max-h-[560px] overflow-y-auto pr-1">
           {filteredTerms.map((t) => {
             const isSelected = activeTerm.id === t.id;
+            const isExplored = lookedUpDictionaryIds.includes(t.id);
             return (
               <div
                 key={t.id}
-                onClick={() => {
-                  sounds.playClick();
-                  setActiveTermId(t.id);
-                }}
+                onClick={() => handleSelectTerm(t.id)}
                 className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
                   isSelected
-                    ? 'border-amber-500 bg-amber-100/70 shadow-sm scale-101 ring-2 ring-amber-300'
+                    ? 'border-amber-500 bg-amber-100/70 shadow-sm scale-[1.01] ring-2 ring-amber-300'
                     : getCardBorder(t.color)
                 }`}
               >
@@ -205,9 +209,12 @@ export const LittleGrammarDictionary: React.FC<LittleGrammarDictionaryProps> = (
                     {t.icon}
                   </span>
                   <div>
-                    <h3 className="font-black text-base text-stone-900 leading-tight">
-                      {t.term}
-                    </h3>
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="font-black text-base text-stone-900 leading-tight">
+                        {t.term}
+                      </h3>
+                      {isExplored && <CheckCircle2 size={14} className="text-emerald-600" />}
+                    </div>
                     <span className="text-[11px] font-bold text-stone-500 block">
                       {t.badge}
                     </span>
@@ -278,7 +285,7 @@ export const LittleGrammarDictionary: React.FC<LittleGrammarDictionaryProps> = (
 
             {/* Lexical Narrative for Children */}
             <div className="space-y-1.5 text-sm text-stone-700 leading-relaxed font-medium">
-              <span className="text-xs font-black text-stone-500 uppercase tracking-wider block">
+              <span className="text-xs font-black text-stone-500 block">
                 الشَّرْحُ البَسِيطُ لِلصِّغَارِ:
               </span>
               <p className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 text-stone-800">

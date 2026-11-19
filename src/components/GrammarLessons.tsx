@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { Crown, Target, Sparkles, ArrowRight, Volume2, CheckCircle2, Lightbulb } from 'lucide-react';
+import { Crown, Target, Sparkles, ArrowRight, Volume2 } from 'lucide-react';
 import { CORE_LESSONS } from '../data/curriculumData';
 import { MascotMessage } from './MascotMessage';
 import { sounds, speakArabic } from '../utils/audio';
 
 interface GrammarLessonsProps {
   onGoToExamples: () => void;
-  onEarnStar: () => void;
+  onEarnStar: (rewardId?: string) => void;
 }
 
 export const GrammarLessons: React.FC<GrammarLessonsProps> = ({ onGoToExamples, onEarnStar }) => {
   const [activeTab, setActiveTab] = useState<'subject' | 'object' | 'compare'>('subject');
-  const [revealedTip, setRevealedTip] = useState(false);
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -25,13 +24,13 @@ export const GrammarLessons: React.FC<GrammarLessonsProps> = ({ onGoToExamples, 
 
       {/* Lesson Switcher Tabs */}
       <div className="flex justify-center">
-        <div className="inline-flex p-1.5 rounded-2xl bg-white border-2 border-stone-200 shadow-xs">
+        <div className="inline-flex flex-wrap justify-center gap-1 p-1.5 rounded-2xl bg-white border-2 border-stone-200 shadow-xs">
           <button
             onClick={() => {
               sounds.playClick();
               setActiveTab('subject');
             }}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeTab === 'subject'
                 ? 'bg-amber-500 text-white shadow-sm'
                 : 'text-stone-700 hover:bg-stone-100'
@@ -45,8 +44,9 @@ export const GrammarLessons: React.FC<GrammarLessonsProps> = ({ onGoToExamples, 
             onClick={() => {
               sounds.playClick();
               setActiveTab('object');
+              onEarnStar('lesson-object');
             }}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeTab === 'object'
                 ? 'bg-sky-600 text-white shadow-sm'
                 : 'text-stone-700 hover:bg-stone-100'
@@ -60,15 +60,16 @@ export const GrammarLessons: React.FC<GrammarLessonsProps> = ({ onGoToExamples, 
             onClick={() => {
               sounds.playClick();
               setActiveTab('compare');
+              onEarnStar('lesson-compare');
             }}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeTab === 'compare'
                 ? 'bg-purple-600 text-white shadow-sm'
                 : 'text-stone-700 hover:bg-stone-100'
             }`}
           >
             <Sparkles size={18} />
-            <span>3. جَدْوَلُ المُقَارَنَةِ السَّحِيرِ</span>
+            <span>3. جَدْوَلُ المُقَارَنَةِ السِّحْرِيِّ</span>
           </button>
         </div>
       </div>
@@ -149,7 +150,7 @@ export const GrammarLessons: React.FC<GrammarLessonsProps> = ({ onGoToExamples, 
             </div>
 
             <div className="text-center py-3 bg-white/10 rounded-xl backdrop-blur-xs border border-white/20">
-              <p className="text-xl md:text-2xl font-black tracking-wide">
+              <p className="text-xl md:text-2xl font-black">
                 «{CORE_LESSONS.subject.ruleIerab}»
               </p>
             </div>
@@ -245,7 +246,7 @@ export const GrammarLessons: React.FC<GrammarLessonsProps> = ({ onGoToExamples, 
             </div>
 
             <div className="text-center py-3 bg-white/10 rounded-xl backdrop-blur-xs border border-white/20">
-              <p className="text-xl md:text-2xl font-black tracking-wide">
+              <p className="text-xl md:text-2xl font-black">
                 «{CORE_LESSONS.object.ruleIerab}»
               </p>
             </div>
@@ -329,7 +330,7 @@ export const GrammarLessons: React.FC<GrammarLessonsProps> = ({ onGoToExamples, 
                 <tr>
                   <td className="p-4 bg-stone-50 font-black text-stone-700">مِثَالٌ مَشْكُولٌ</td>
                   <td className="p-4 bg-amber-50/40 border-r border-stone-200 font-black text-amber-950">
-                    قَرَأَ <span className="underline decoration-amber-500">مُحَمَّدُ</span>
+                    قَرَأَ <span className="underline decoration-amber-500">مُحَمَّدٌ</span>
                   </td>
                   <td className="p-4 bg-sky-50/40 border-r border-stone-200 font-black text-sky-950">
                     قَرَأَ مُحَمَّدٌ <span className="underline decoration-sky-500">الكِتَابَ</span>
@@ -360,7 +361,7 @@ export const GrammarLessons: React.FC<GrammarLessonsProps> = ({ onGoToExamples, 
             sounds.playClick();
             onGoToExamples();
           }}
-          className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-black text-base md:text-lg shadow-md hover:shadow-lg transition-all cursor-pointer hover:scale-102"
+          className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-black text-base md:text-lg shadow-md hover:shadow-lg transition-all cursor-pointer hover:scale-[1.02]"
         >
           <span>تَقَدَّمْ إِلَى النَّمَاذِجِ الإِعْرَابِيَّةِ الخَمْسَةِ المَشْكُولَةِ</span>
           <ArrowRight size={20} className="rotate-180" />

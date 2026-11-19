@@ -21,6 +21,7 @@ export interface StudentProfile {
   mcqCompleted: number;
   diacriticsCompleted: number;
   parsingCompleted: number;
+  wordHunterCompleted: number;
   dictionaryLookups: number;
   joinedDate: string;
   favoriteWord: string;
@@ -74,12 +75,12 @@ export interface MCQQuestion {
 export interface DiacriticsQuestion {
   id: number;
   sentenceContext: string;
-  targetWordBase: string; // e.g. "الوَلَد"
+  targetWordBase: string;
   options: {
     label: string;
     harakaName: string;
-    symbol: string; // e.g. "ُ" or "َ"
-    fullForm: string; // e.g. "الوَلَدُ"
+    symbol: string;
+    fullForm: string;
     isCorrect: boolean;
   }[];
   role: string;
@@ -90,11 +91,44 @@ export interface ParsingExercise {
   id: number;
   sentence: string;
   targetWord: string;
-  targetRoleLabel: string; // "إعراب كلمة: ..."
-  optionsOrderTokens: string[]; // For interactive card order: ["فَاعِلٌ", "مَرْفُوعٌ", "وَعَلامَةُ", "رَفْعِهِ", "الضَّمَّةُ", "الظَّاهِرَةُ"]
+  targetRoleLabel: string;
+  optionsOrderTokens: string[];
   correctTokens: string[];
   modelAnswer: string;
   reasonTip: string;
+}
+
+export interface WordHunterQuestion {
+  id: number;
+  prompt: string;
+  targetRole: 'فاعل' | 'مفعول به' | 'فعل';
+  words: {
+    text: string;
+    role: 'فاعل' | 'مفعول به' | 'فعل' | 'حرف' | 'اسم مجرور';
+    isTarget: boolean;
+    ierab: string;
+  }[];
+  explanation: string;
+}
+
+export interface ChallengeQuestion {
+  id: string;
+  sentence: string;
+  question: string;
+  targetRole: 'فاعل' | 'مفعول به' | 'تاء التأنيث' | 'تنوين الفتح';
+  options: string[];
+  correctAnswer: string;
+  explanation: string;
+}
+
+export interface MistakeItem {
+  id: string;
+  sourceLabel: string;
+  sentence: string;
+  userAnswer: string;
+  correctAnswer: string;
+  explanation: string;
+  resolved?: boolean;
 }
 
 export interface QuizResults {
@@ -104,6 +138,28 @@ export interface QuizResults {
   totalAnswered: number;
   completedAt?: string;
   studentName?: string;
+}
+
+export interface ProgressState {
+  mcqAnswers: Record<number, string>;
+  diacriticAnswers: Record<number, string>;
+  parsingSelectedTokens: Record<number, string[]>;
+  parsingRevealed: Record<number, boolean>;
+  parsingSolved: Record<number, boolean>;
+  wordHunterAnswers: Record<number, number>; // questionId -> chosen word index
+  challengeSolvedCount: number;
+  introWordChoices: Record<number, 'اسم' | 'فعل' | 'حرف'>;
+  introSentenceChoice: 'فعلية' | 'اسمية' | null;
+  lookedUpDictionaryIds: string[];
+  awardedRewards: string[];
+  mistakes: MistakeItem[];
+}
+
+export interface StudentAccount {
+  id: string;
+  profile: StudentProfile;
+  starsCount: number;
+  progress: ProgressState;
 }
 
 export interface DictionaryTerm {
@@ -121,4 +177,30 @@ export interface DictionaryTerm {
   vocalizedExamples: string[];
   ierabRule?: string;
   childTip: string;
+}
+
+export interface LabVerbItem {
+  id: string;
+  pastMasc: string;
+  pastFem: string;
+  pastFemBeforeAl: string; // e.g., أَكَلَتِ before "ال..."
+  presentMasc: string;
+  presentFem: string;
+  icon: string;
+  isTransitive: boolean;
+  allowedObjectIds: string[];
+}
+
+export interface LabSubjectItem {
+  id: string;
+  vocalized: string;
+  gender: 'masc' | 'fem';
+  startsWithAl: boolean;
+  icon: string;
+}
+
+export interface LabObjectItem {
+  id: string;
+  vocalized: string;
+  icon: string;
 }

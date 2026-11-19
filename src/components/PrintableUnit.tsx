@@ -1,18 +1,25 @@
-import React, { useRef } from 'react';
-import { Printer, BookOpen, Download, Sparkles, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Printer, Eye, EyeOff } from 'lucide-react';
 import {
   MASCOT,
   STORY_CHARACTERS,
-  SENTENCE_TYPES_DATA,
-  CORE_LESSONS,
   PARSED_EXAMPLES,
   MCQ_QUESTIONS,
   DIACRITICS_QUESTIONS,
   PARSING_EXERCISES,
   MOTIVATIONAL_PHRASES,
+  GRAMMAR_DICTIONARY_TERMS,
 } from '../data/curriculumData';
 
+const ARABIC_OPTION_LETTERS: Record<string, string> = {
+  a: 'أ',
+  b: 'ب',
+  c: 'ج',
+};
+
 export const PrintableUnit: React.FC = () => {
+  const [showAnswerKey, setShowAnswerKey] = useState(true);
+
   const handlePrint = () => {
     window.print();
   };
@@ -35,13 +42,23 @@ export const PrintableUnit: React.FC = () => {
           </div>
         </div>
 
-        <button
-          onClick={handlePrint}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-black text-sm shadow-md transition-all cursor-pointer"
-        >
-          <Printer size={18} />
-          <span>طِبَاعَةُ كُرَّاسِ الوَحْدَةِ (PRINT)</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setShowAnswerKey((prev) => !prev)}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-800 font-black text-xs md:text-sm border border-stone-300 transition-all cursor-pointer"
+          >
+            {showAnswerKey ? <EyeOff size={16} /> : <Eye size={16} />}
+            <span>{showAnswerKey ? 'إِخْفَاءُ الحُلُولِ (لِلتَّلْمِيذِ)' : 'إِظْهَارُ الحُلُولِ (لِلْمُعَلِّمِ)'}</span>
+          </button>
+
+          <button
+            onClick={handlePrint}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-black text-sm shadow-md transition-all cursor-pointer"
+          >
+            <Printer size={18} />
+            <span>طِبَاعَةُ كُرَّاسِ الوَحْدَةِ</span>
+          </button>
+        </div>
       </div>
 
       {/* ========================================================================= */}
@@ -53,7 +70,7 @@ export const PrintableUnit: React.FC = () => {
           <div className="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-black text-xs border border-amber-300">
             جُمْهُورِيَّةُ اللُّغَةِ العَرَبِيَّةِ • المَرْحَلَةُ الِابْتِدَائِيَّةُ (السَّنَة الثَّالِثَة - 8-9 سَنَوَات)
           </div>
-          <h1 className="text-2xl md:text-4xl font-black text-stone-900 tracking-tight">
+          <h1 className="text-2xl md:text-4xl font-black text-stone-900">
             وَحْدَةُ تَعْلِيمِ الإِعْرَابِ: الفَاعِلُ وَالمَفْعُولُ بِهِ
           </h1>
           <p className="text-sm md:text-base text-stone-600 font-medium max-w-2xl mx-auto">
@@ -177,7 +194,7 @@ export const PrintableUnit: React.FC = () => {
               <li><span className="font-black">مِثَالٌ تَوْضِيحِيٌّ:</span> «كَتَبَ التِّلْمِيذُ» 👈 مَنْ كَتَبَ؟ «التِّلْمِيذُ» هُوَ الفَاعِلُ.</li>
             </ul>
             <div className="p-3 bg-amber-200/80 rounded-xl text-center font-black text-base md:text-lg text-amber-950 border border-amber-300">
-              قَاعِدَةُ الإِعْرَابِ المَبَاشِرِ: «فَاعِلٌ مَرْفُوعٌ وَعَلامَةُ رَفْعِهِ الضَّمَّةُ الظَّاهِرَةُ عَلَى آخِرِهِ.»
+              قَاعِدَةُ الإِعْرَابِ المَبَاشِرِ: «فَاعِلٌ مَرْفُوعٌ وَعَلَامَةُ رَفْعِهِ الضَّمَّةُ الظَّاهِرَةُ عَلَى آخِرِهِ.»
             </div>
           </div>
 
@@ -197,7 +214,7 @@ export const PrintableUnit: React.FC = () => {
               <li><span className="font-black">مِثَالٌ تَوْضِيحِيٌّ:</span> «أَكَلَ الأَرْنَبُ الجَزَرَةَ» 👈 مَاذَا أَكَلَ الأَرْنَبُ؟ «الجَزَرَةَ» هِيَ المَفْعُولُ بِهِ.</li>
             </ul>
             <div className="p-3 bg-sky-200/80 rounded-xl text-center font-black text-base md:text-lg text-sky-950 border border-sky-300">
-              قَاعِدَةُ الإِعْرَابِ المَبَاشِرِ: «مَفْعُولٌ بِهِ مَنْصُوبٌ وَعَلامَةُ نَصْبِهِ الفَتْحَةُ الظَّاهِرَةُ عَلَى آخِرِهِ.»
+              قَاعِدَةُ الإِعْرَابِ المَبَاشِرِ: «مَفْعُولٌ بِهِ مَنْصُوبٌ وَعَلَامَةُ نَصْبِهِ الفَتْحَةُ الظَّاهِرَةُ عَلَى آخِرِهِ.»
             </div>
           </div>
 
@@ -262,14 +279,14 @@ export const PrintableUnit: React.FC = () => {
             </h3>
             <div className="space-y-2.5">
               {MCQ_QUESTIONS.map((q, i) => (
-                <div key={q.id} className="p-3.5 rounded-xl border border-stone-200 bg-stone-50/50 space-y-1.5 text-sm">
+                <div key={q.id} className="p-3.5 rounded-xl border border-stone-200 bg-stone-50/50 space-y-1.5 text-sm print:break-inside-avoid">
                   <p className="font-black text-stone-900">
                     {i + 1}. {q.question}
                   </p>
                   <div className="flex flex-wrap gap-4 text-xs font-bold text-stone-700 pr-3">
                     {q.options.map((opt) => (
                       <span key={opt.id} className="border border-stone-300 px-3 py-1 rounded-lg bg-white">
-                        ( {opt.id} ) {opt.text} {opt.isCorrect && '✓ (الحَلُّ)'}
+                        ( {ARABIC_OPTION_LETTERS[opt.id] || opt.id} ) {opt.text} {showAnswerKey && opt.isCorrect && '✓ (الحَلُّ)'}
                       </span>
                     ))}
                   </div>
@@ -284,16 +301,25 @@ export const PrintableUnit: React.FC = () => {
               الجُزْءُ الثَّانِي: مَلْءُ الفَرَاغِ بِالحَرَكَةِ المُنَاسِبَةِ (الضَّمَّةُ ُ أَوِ الفَتْحَةُ َ)
             </h3>
             <div className="space-y-2 text-sm font-bold text-stone-800">
-              {DIACRITICS_QUESTIONS.map((q, i) => (
-                <div key={q.id} className="p-3 rounded-xl border border-stone-200 bg-stone-50/50 flex items-center justify-between">
-                  <span>
-                    {i + 1}. {q.sentenceContext}
-                  </span>
-                  <span className="text-xs font-black text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg">
-                    الحَلُّ: {q.role} 👈 ({q.options.find((o) => o.isCorrect)?.symbol})
-                  </span>
-                </div>
-              ))}
+              {DIACRITICS_QUESTIONS.map((q, i) => {
+                const correctOpt = q.options.find((o) => o.isCorrect);
+                return (
+                  <div key={q.id} className="p-3 rounded-xl border border-stone-200 bg-stone-50/50 flex flex-wrap items-center justify-between gap-2 print:break-inside-avoid">
+                    <span>
+                      {i + 1}. {q.sentenceContext}
+                    </span>
+                    {showAnswerKey ? (
+                      <span className="text-xs font-black text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg">
+                        الحَلُّ: {correctOpt?.fullForm} ({q.role})
+                      </span>
+                    ) : (
+                      <span className="text-xs font-bold text-stone-500 bg-white px-2.5 py-1 rounded-lg border border-stone-300">
+                        الكَلِمَةُ: {q.targetWordBase} ( ..... )
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -304,16 +330,22 @@ export const PrintableUnit: React.FC = () => {
             </h3>
             <div className="space-y-3">
               {PARSING_EXERCISES.map((ex, i) => (
-                <div key={ex.id} className="p-4 rounded-xl border border-purple-300 bg-purple-50/30 space-y-2 text-sm">
+                <div key={ex.id} className="p-4 rounded-xl border border-purple-300 bg-purple-50/30 space-y-2 text-sm print:break-inside-avoid">
                   <div className="flex items-center justify-between font-black text-stone-900">
                     <span>{i + 1}. أَعْرِبْ مَا يَأْتِي: «{ex.sentence}»</span>
                     <span className="text-xs bg-purple-200 text-purple-900 px-2 py-0.5 rounded-md">
                       {ex.targetRoleLabel}
                     </span>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-white border border-purple-200 text-xs md:text-sm font-bold text-stone-800">
-                    <span className="text-emerald-700 font-black">النَّمُوذَجُ الصَّائِبُ:</span> {ex.modelAnswer}
-                  </div>
+                  {showAnswerKey ? (
+                    <div className="p-2.5 rounded-lg bg-white border border-purple-200 text-xs md:text-sm font-bold text-stone-800">
+                      <span className="text-emerald-700 font-black">النَّمُوذَجُ الصَّائِبُ:</span> {ex.modelAnswer}
+                    </div>
+                  ) : (
+                    <div className="p-3 rounded-lg bg-white border border-dashed border-purple-300 text-xs text-stone-400 font-bold">
+                      الإِعْرَابُ: ....................................................................................
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -360,40 +392,26 @@ export const PrintableUnit: React.FC = () => {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            <div className="p-3.5 rounded-xl border border-amber-300 bg-amber-50/40 space-y-1">
-              <div className="font-black text-sm text-amber-950">👑 الفَاعِلُ:</div>
-              <p className="text-xs text-stone-700 leading-relaxed font-medium">
-                اسْمٌ مَرْفُوعٌ يَدُلُّ عَلَى مَنْ قَامَ بِالفِعْلِ، وَعَلَامَتُهُ الضَّمَّةُ ( ُ )، وَنَسْأَلُ عَنْهُ بِـ «مَنْ؟».
-              </p>
-            </div>
-
-            <div className="p-3.5 rounded-xl border border-sky-300 bg-sky-50/40 space-y-1">
-              <div className="font-black text-sm text-sky-950">🎯 المَفْعُولُ بِهِ:</div>
-              <p className="text-xs text-stone-700 leading-relaxed font-medium">
-                اسْمٌ مَنْصُوبٌ يَدُلُّ عَلَى مَا وَقَعَ عَلَيْهِ فِعْلُ الفَاعِلِ، وَعَلَامَتُهُ الفَتْحَةُ ( َ )، وَنَسْأَلُ عَنْهُ بِـ «مَاذَا؟».
-              </p>
-            </div>
-
-            <div className="p-3.5 rounded-xl border border-blue-300 bg-blue-50/40 space-y-1">
-              <div className="font-black text-sm text-blue-950">👦 الاسْمُ:</div>
-              <p className="text-xs text-stone-700 leading-relaxed font-medium">
-                كَلِمَةٌ تَدُلُّ عَلَى إِنْسَانٍ أَوْ حَيَوَانٍ أَوْ نَبَاتٍ أَوْ جَمَادٍ دُونَ زَمَنٍ، وَتَقْبَلُ «الـ» وَالتَّنْوِينَ.
-              </p>
-            </div>
-
-            <div className="p-3.5 rounded-xl border border-emerald-300 bg-emerald-50/40 space-y-1">
-              <div className="font-black text-sm text-emerald-950">🏃‍♂️ الفِعْلُ:</div>
-              <p className="text-xs text-stone-700 leading-relaxed font-medium">
-                كَلِمَةٌ تَدُلُّ عَلَى عَمَلٍ وَحَرَكَةٍ فِي زَمَنٍ مُعَيَّنٍ (مَاضٍ، مُضَارِعٌ، أَمْرٌ)، وَلَا يَقْبَلُ «الـ» إِطْلَاقاً.
-              </p>
-            </div>
+            {GRAMMAR_DICTIONARY_TERMS.map((item) => (
+              <div
+                key={item.id}
+                className="p-3.5 rounded-xl border border-amber-300 bg-amber-50/30 space-y-1 print:break-inside-avoid"
+              >
+                <div className="font-black text-sm text-amber-950">
+                  {item.icon} {item.term}:
+                </div>
+                <p className="text-xs text-stone-700 leading-relaxed font-medium">
+                  {item.shortDefinition}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
 
         {/* Teacher Signature & Seal */}
         <footer className="pt-8 border-t border-stone-200 flex flex-wrap items-center justify-between text-xs text-stone-500">
           <div>
-            <span>وِحْدَةُ الإِعْرَابِ المُيَسَّرِ • الصَّفُّ الثَّالِثُ الِابْتِدَائِيُّ</span>
+            <span>وَحْدَةُ الإِعْرَابِ المُيَسَّرِ • الصَّفُّ الثَّالِثُ الِابْتِدَائِيُّ</span>
           </div>
           <div className="font-bold text-stone-700">
             تَوْقِيعُ خَبِيرِ اللُّغَةِ العَرَبِيَّةِ: الأُسْتَاذُ فَصِيح 🦉

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Volume2, VolumeX, Sparkles } from 'lucide-react';
-import { speakArabic, stopSpeech, sounds } from '../utils/audio';
+import { speakArabic, stopSpeech, sounds, getArabicVoiceStatus } from '../utils/audio';
 
 interface MascotMessageProps {
   message: string;
@@ -16,6 +16,7 @@ export const MascotMessage: React.FC<MascotMessageProps> = ({
   emotion = 'teaching',
 }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceMissingHint, setVoiceMissingHint] = useState(false);
 
   const variantStyles = {
     amber: {
@@ -47,17 +48,29 @@ export const MascotMessage: React.FC<MascotMessageProps> = ({
     teaching: '🦉',
   }[emotion];
 
+  useEffect(() => {
+    return () => {
+      stopSpeech();
+    };
+  }, []);
+
   const handleSpeak = () => {
     sounds.playClick();
     if (isSpeaking) {
       stopSpeech();
       setIsSpeaking(false);
     } else {
+      const status = getArabicVoiceStatus();
+      setVoiceMissingHint(status !== 'available');
       setIsSpeaking(true);
       const textToSpeak = `${message}. ${subtext || ''}`;
-      speakArabic(textToSpeak, () => {
+      const started = speakArabic(textToSpeak, () => {
         setIsSpeaking(false);
       });
+      if (!started) {
+        setIsSpeaking(false);
+        setVoiceMissingHint(true);
+      }
     }
   };
 
@@ -84,17 +97,20 @@ export const MascotMessage: React.FC<MascotMessageProps> = ({
       {/* Bubble text */}
       <div className="flex-grow space-y-1">
         <div className="hidden sm:inline-block mb-1">
-          <span className={`text-xs font-black px-2.5 py-0.5 rounded-full ${variantStyles.badge} inline-flex items-center gap-1`}>
+          <span
+            className={`text-xs font-black px-2.5 py-0.5 rounded-full ${variantStyles.badge} inline-flex items-center gap-1`}
+          >
             <Sparkles size={12} />
             نَصِيحَةُ الأُسْتَاذِ فَصِيح:
           </span>
         </div>
-        <p className="text-base md:text-lg font-bold text-stone-900 leading-relaxed tracking-wide">
-          {message}
-        </p>
+        <p className="text-base md:text-lg font-bold text-stone-900 leading-relaxed">{message}</p>
         {subtext && (
-          <p className="text-xs md:text-sm text-stone-600 font-medium leading-relaxed">
-            {subtext}
+          <p className="text-xs md:text-sm text-stone-600 font-medium leading-relaxed">{subtext}</p>
+        )}
+        {voiceMissingHint && (
+          <p className="text-xs text-amber-800 font-bold pt-1">
+            💡 تَلْمِيحٌ: إِذَا لَمْ تَسْمَعِ الصَّوْتَ العَرَبِيَّ، تَأَكَّدْ مِنْ تَفْعِيلِ حُزْمَةِ اللُّغَةِ العَرَبِيَّةِ لِلنُّطْقِ فِي إِعْدَادَاتِ هَاتِفِكَ أَوْ مُتَصَفِّحِكَ.
           </p>
         )}
       </div>
@@ -103,7 +119,7 @@ export const MascotMessage: React.FC<MascotMessageProps> = ({
       <div className="self-end sm:self-center flex-shrink-0">
         <button
           onClick={handleSpeak}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs md:text-sm font-bold shadow-sm transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs md:text-sm font-bold shadow-sm transition-all cursor-pointer ${
             isSpeaking
               ? 'bg-rose-500 hover:bg-rose-600 text-white animate-pulse'
               : 'bg-white hover:bg-stone-50 text-stone-800 border border-stone-300'

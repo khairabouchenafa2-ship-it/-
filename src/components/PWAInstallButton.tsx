@@ -3,13 +3,23 @@ import { Download, Smartphone, Share, PlusSquare, X } from 'lucide-react';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import { sounds } from '../utils/audio';
 
-export const PWAInstallButton: React.FC = () => {
+interface PWAInstallButtonProps {
+  showFallbackInfo?: boolean;
+}
+
+export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
+  showFallbackInfo = false,
+}) => {
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
   const [showIOSGuide, setShowIOSGuide] = useState(false);
 
   // Suppress button if already running as an installed standalone app
   if (isInstalled) {
-    return null;
+    return showFallbackInfo ? (
+      <span className="text-xs font-black text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-300">
+        ✅ التَّطْبِيقُ مُثَبَّتٌ بِالفِعْلِ وَيَعْمَلُ كَبَرْنَامَجٍ مُسْتَقِلٍّ
+      </span>
+    ) : null;
   }
 
   // Chromium / Android / Desktop install flow
@@ -80,7 +90,11 @@ export const PWAInstallButton: React.FC = () => {
                     1
                   </span>
                   <p className="leading-relaxed">
-                    اضْغَطْ عَلَى زِرِّ <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white border border-stone-300 text-blue-700"><Share size={13} /> المُشَارَكَةِ</span> فِي شَرِيطِ مُتَصَفِّحِ سَفَارِي.
+                    اضْغَطْ عَلَى زِرِّ{' '}
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white border border-stone-300 text-blue-700">
+                      <Share size={13} /> المُشَارَكَةِ
+                    </span>{' '}
+                    فِي شَرِيطِ مُتَصَفِّحِ سَفَارِي.
                   </p>
                 </div>
 
@@ -89,7 +103,11 @@ export const PWAInstallButton: React.FC = () => {
                     2
                   </span>
                   <p className="leading-relaxed">
-                    مَرِّرْ لِلْأَسْفَلِ وَاخْتَرْ <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white border border-stone-300 text-stone-900"><PlusSquare size={13} /> إِضَافَةٌ إِلَى الشَّاشَةِ الرَّئِيسِيَّةِ</span>.
+                    مَرِّرْ لِلْأَسْفَلِ وَاخْتَرْ{' '}
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white border border-stone-300 text-stone-900">
+                      <PlusSquare size={13} /> إِضَافَةٌ إِلَى الشَّاشَةِ الرَّئِيسِيَّةِ
+                    </span>
+                    .
                   </p>
                 </div>
 
@@ -98,7 +116,8 @@ export const PWAInstallButton: React.FC = () => {
                     3
                   </span>
                   <p className="leading-relaxed">
-                    اضْغَطْ عَلَى <span className="text-emerald-700 font-black">«إِضَافَةٌ»</span> لِيَعْمَلَ التَّطْبِيقُ كَبَرْنَامَجٍ مُسْتَقِلٍّ وَدُونَ إِنْتَرْنِت!
+                    اضْغَطْ عَلَى <span className="text-emerald-700 font-black">«إِضَافَةٌ»</span>{' '}
+                    لِيَعْمَلَ التَّطْبِيقُ كَبَرْنَامَجٍ مُسْتَقِلٍّ وَدُونَ إِنْتَرْنِت!
                   </p>
                 </div>
               </div>
@@ -116,6 +135,14 @@ export const PWAInstallButton: React.FC = () => {
           </div>
         )}
       </>
+    );
+  }
+
+  if (showFallbackInfo) {
+    return (
+      <div className="text-xs font-bold text-emerald-900 bg-white px-3.5 py-2 rounded-xl border border-emerald-200 leading-relaxed">
+        📲 لِلتَّثْبِيتِ: افْتَحِ التَّطْبِيقَ فِي مُتَصَفِّحِ الهَاتِفِ (Chrome لِلْأَنْدْرُوِيد أَوْ Safari لِلْآيْفُون) وَاخْتَرْ «إِضَافَةٌ إِلَى الشَّاشَةِ الرَّئِيسِيَّةِ».
+      </div>
     );
   }
 
