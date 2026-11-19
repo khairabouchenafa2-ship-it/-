@@ -1,6 +1,30 @@
-export type SectionTab = 'intro' | 'lessons' | 'examples' | 'quiz' | 'lab' | 'printable';
+export type SectionTab = 'intro' | 'lessons' | 'examples' | 'quiz' | 'lab' | 'printable' | 'profile';
 
 export type WordType = 'noun' | 'verb' | 'particle';
+
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  unlocked: boolean;
+}
+
+export interface StudentProfile {
+  name: string;
+  avatar: string;
+  grade: string;
+  school: string;
+  levelTitle: string;
+  totalStars: number;
+  mcqCompleted: number;
+  diacriticsCompleted: number;
+  parsingCompleted: number;
+  dictionaryLookups: number;
+  joinedDate: string;
+  favoriteWord: string;
+}
 
 export interface StoryCharacter {
   name: string;
@@ -80,4 +104,21 @@ export interface QuizResults {
   totalAnswered: number;
   completedAt?: string;
   studentName?: string;
+}
+
+export interface DictionaryTerm {
+  id: string;
+  term: string;
+  vocalized: string;
+  lexicalCategory: string;
+  icon: string;
+  badge: string;
+  color: string;
+  shortDefinition: string;
+  lexicalEntry: string;
+  secretSigns: string[];
+  magicQuestion?: string;
+  vocalizedExamples: string[];
+  ierabRule?: string;
+  childTip: string;
 }

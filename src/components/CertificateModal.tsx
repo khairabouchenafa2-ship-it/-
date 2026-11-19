@@ -7,14 +7,24 @@ interface CertificateModalProps {
   isOpen: boolean;
   onClose: () => void;
   starsCount: number;
+  studentName?: string;
 }
 
 export const CertificateModal: React.FC<CertificateModalProps> = ({
   isOpen,
   onClose,
   starsCount,
+  studentName: propStudentName,
 }) => {
-  const [studentName, setStudentName] = useState<string>('بَطَلُ اللُّغَةِ العَرَبِيَّةِ');
+  const [studentName, setStudentName] = useState<string>(
+    propStudentName || 'بَطَلُ اللُّغَةِ العَرَبِيَّةِ'
+  );
+
+  React.useEffect(() => {
+    if (propStudentName) {
+      setStudentName(propStudentName);
+    }
+  }, [propStudentName]);
 
   if (!isOpen) return null;
 

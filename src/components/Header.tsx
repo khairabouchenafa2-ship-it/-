@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Volume2, VolumeX, Sparkles, BookOpen, Award, Printer, GraduationCap, ZoomIn, ZoomOut } from 'lucide-react';
-import { SectionTab } from '../types';
+import { SectionTab, StudentProfile } from '../types';
 import { sounds } from '../utils/audio';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface HeaderProps {
   currentTab: SectionTab;
@@ -12,6 +13,7 @@ interface HeaderProps {
   onToggleSound: () => void;
   largeFont: boolean;
   onToggleLargeFont: () => void;
+  profile?: StudentProfile;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -23,6 +25,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleSound,
   largeFont,
   onToggleLargeFont,
+  profile,
 }) => {
   const tabs: { id: SectionTab; label: string; icon: string; badge?: string }[] = [
     { id: 'intro', label: 'المُقَدِّمَةُ وَالقِصَّةُ', icon: '📖' },
@@ -31,6 +34,7 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'quiz', label: 'بَنْكُ التَّمَارِينِ', icon: '🎯', badge: 'تَفَاعُلِي' },
     { id: 'lab', label: 'مُخْتَبَرُ الجُمَلِ', icon: '🧪' },
     { id: 'printable', label: 'الكُرَّاسُ وَالطِّبَاعَةُ', icon: '🖨️' },
+    { id: 'profile', label: 'المَلَفُّ الشَّخْصِيُّ', icon: '👤', badge: 'بَطَل' },
   ];
 
   return (
@@ -105,6 +109,28 @@ export const Header: React.FC<HeaderProps> = ({
             <Award size={16} />
             <span>الشَّهَادَةُ</span>
           </button>
+
+          {/* Student Profile Shortcut Button */}
+          <button
+            onClick={() => {
+              sounds.playClick();
+              onSelectTab('profile');
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border transition-all cursor-pointer ${
+              currentTab === 'profile'
+                ? 'bg-amber-600 text-white border-amber-600 shadow-sm ring-2 ring-amber-300'
+                : 'bg-amber-50 hover:bg-amber-100 text-amber-950 border-amber-300'
+            }`}
+            title="الملف الشخصي للطالب"
+          >
+            <span className="text-base">{profile?.avatar || '👦'}</span>
+            <span className="text-xs font-black hidden sm:inline truncate max-w-[80px]">
+              {profile?.name || 'مَلَفِّي'}
+            </span>
+          </button>
+
+          {/* In-app PWA Install Prompt */}
+          <PWAInstallButton />
         </div>
       </div>
 

@@ -345,6 +345,51 @@ export const PrintableUnit: React.FC = () => {
           </div>
         </section>
 
+        {/* ------------------------------------------------------------------- */}
+        {/* 5. قاموس القواعد الصغير                                            */}
+        {/* ------------------------------------------------------------------- */}
+        <section className="space-y-4 border-t-2 border-stone-200 pt-6">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">📚</span>
+            <h2 className="text-xl md:text-2xl font-black text-amber-950">
+              خَامِساً: قَامُوسُ القَوَاعِدِ الصَّغِيرُ (مُعْجَمُ مُصْطَلَحَاتِ النَّحْوِ)
+            </h2>
+          </div>
+          <p className="text-sm text-stone-600 font-medium">
+            مَعَانٍ مُعْجَمِيَّةٌ مُبَسَّطَةٌ لِأَهَمِّ المُصْطَلَحَاتِ النَّحْوِيَّةِ لِتَرْسِيخِ الفَهْمِ:
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <div className="p-3.5 rounded-xl border border-amber-300 bg-amber-50/40 space-y-1">
+              <div className="font-black text-sm text-amber-950">👑 الفَاعِلُ:</div>
+              <p className="text-xs text-stone-700 leading-relaxed font-medium">
+                اسْمٌ مَرْفُوعٌ يَدُلُّ عَلَى مَنْ قَامَ بِالفِعْلِ، وَعَلَامَتُهُ الضَّمَّةُ ( ُ )، وَنَسْأَلُ عَنْهُ بِـ «مَنْ؟».
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-xl border border-sky-300 bg-sky-50/40 space-y-1">
+              <div className="font-black text-sm text-sky-950">🎯 المَفْعُولُ بِهِ:</div>
+              <p className="text-xs text-stone-700 leading-relaxed font-medium">
+                اسْمٌ مَنْصُوبٌ يَدُلُّ عَلَى مَا وَقَعَ عَلَيْهِ فِعْلُ الفَاعِلِ، وَعَلَامَتُهُ الفَتْحَةُ ( َ )، وَنَسْأَلُ عَنْهُ بِـ «مَاذَا؟».
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-xl border border-blue-300 bg-blue-50/40 space-y-1">
+              <div className="font-black text-sm text-blue-950">👦 الاسْمُ:</div>
+              <p className="text-xs text-stone-700 leading-relaxed font-medium">
+                كَلِمَةٌ تَدُلُّ عَلَى إِنْسَانٍ أَوْ حَيَوَانٍ أَوْ نَبَاتٍ أَوْ جَمَادٍ دُونَ زَمَنٍ، وَتَقْبَلُ «الـ» وَالتَّنْوِينَ.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-xl border border-emerald-300 bg-emerald-50/40 space-y-1">
+              <div className="font-black text-sm text-emerald-950">🏃‍♂️ الفِعْلُ:</div>
+              <p className="text-xs text-stone-700 leading-relaxed font-medium">
+                كَلِمَةٌ تَدُلُّ عَلَى عَمَلٍ وَحَرَكَةٍ فِي زَمَنٍ مُعَيَّنٍ (مَاضٍ، مُضَارِعٌ، أَمْرٌ)، وَلَا يَقْبَلُ «الـ» إِطْلَاقاً.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Teacher Signature & Seal */}
         <footer className="pt-8 border-t border-stone-200 flex flex-wrap items-center justify-between text-xs text-stone-500">
           <div>

@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Sparkles, Volume2, RefreshCw, Crown, Target, Play } from 'lucide-react';
+import { Sparkles, Volume2, RefreshCw, Crown, Target, Play, BookOpen, FlaskConical } from 'lucide-react';
 import { LAB_WORDS } from '../data/curriculumData';
 import { sounds, speakArabic } from '../utils/audio';
 import { MascotMessage } from './MascotMessage';
+import { LittleGrammarDictionary } from './LittleGrammarDictionary';
 
 interface SentenceLabProps {
   onEarnStar: () => void;
 }
 
 export const SentenceLab: React.FC<SentenceLabProps> = ({ onEarnStar }) => {
+  const [activeLabTab, setActiveLabTab] = useState<'both' | 'builder' | 'dictionary'>('both');
   const [selectedVerb, setSelectedVerb] = useState(LAB_WORDS.verbs[0]);
   const [selectedSubject, setSelectedSubject] = useState(LAB_WORDS.subjects[0]);
   const [selectedObject, setSelectedObject] = useState(LAB_WORDS.objects[0]);
@@ -35,14 +37,65 @@ export const SentenceLab: React.FC<SentenceLabProps> = ({ onEarnStar }) => {
     <div className="space-y-8 animate-fadeIn">
       {/* Mascot cheer */}
       <MascotMessage
-        message="مَرْحَباً بِكُمْ فِي مُخْتَبَرِ الكَلِمَاتِ! هُنَا تَسْتَطِيعُ صِنَاعَةَ جُمَلٍ فِعْلِيَّةٍ كَثِيرَةٍ بِنَفْسِكَ!"
-        subtext="رَاقِبْ كَيْفَ يَحْمِلُ الفَاعِلُ دَائِماً ضَمَّتَهُ الذَّهَبِيَّةَ ُ ، وَيَحْمِلُ المَفْعُولُ بِهِ فَتْحَتَهُ المَرِحَةَ َ !"
+        message="أَهْلاً بِكُمْ فِي المَصْنَعِ النَّحْوِيِّ الذَّكِيِّ! هُنَا تَجِدُ «مُخْتَبَرَ تَرْكِيبِ الجُمَلِ» وَ«قَامُوسَ القَوَاعِدِ الصَّغِيرَ» لِشَرْحِ كُلِّ مُصْطَلَحٍ بِمُعْجَمٍ مُبَسَّطٍ!"
+        subtext="اخْتَرْ مَسَارَكَ: اصْنَعْ جُمَلاً فِعْلِيَّةً أَوْ تَصَفَّحِ القَامُوسَ لِتَكْتَشِفَ أَسْرَارَ الاسْمِ، وَالفِعْلِ، وَالفَاعِلِ، وَالمَفْعُولِ بِهِ!"
         variant="purple"
         emotion="teaching"
       />
 
+      {/* Lab Sub-navigation */}
+      <div className="flex justify-center">
+        <div className="inline-flex p-1.5 rounded-2xl bg-white border-2 border-stone-200 shadow-xs">
+          <button
+            onClick={() => {
+              sounds.playClick();
+              setActiveLabTab('both');
+            }}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all cursor-pointer ${
+              activeLabTab === 'both'
+                ? 'bg-purple-600 text-white shadow-xs'
+                : 'text-stone-700 hover:bg-stone-100'
+            }`}
+          >
+            <Sparkles size={16} />
+            <span>عَرْضُ الكُلِّ (المُخْتَبَرُ + القَامُوسُ)</span>
+          </button>
+
+          <button
+            onClick={() => {
+              sounds.playClick();
+              setActiveLabTab('builder');
+            }}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all cursor-pointer ${
+              activeLabTab === 'builder'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-stone-700 hover:bg-stone-100'
+            }`}
+          >
+            <FlaskConical size={16} />
+            <span>1. تَرْكِيبُ الجُمَلِ الفِعْلِيَّةِ</span>
+          </button>
+
+          <button
+            onClick={() => {
+              sounds.playClick();
+              setActiveLabTab('dictionary');
+            }}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all cursor-pointer ${
+              activeLabTab === 'dictionary'
+                ? 'bg-amber-600 text-white shadow-xs'
+                : 'text-stone-700 hover:bg-stone-100'
+            }`}
+          >
+            <BookOpen size={16} />
+            <span>2. قَامُوسُ القَوَاعِدِ الصَّغِيرُ 📚</span>
+          </button>
+        </div>
+      </div>
+
       {/* Main Builder Board */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border-2 border-amber-200 shadow-md space-y-6">
+      {(activeLabTab === 'both' || activeLabTab === 'builder') && (
+        <div className="bg-white rounded-3xl p-6 md:p-8 border-2 border-amber-200 shadow-md space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-stone-200">
           <div>
             <span className="text-xs font-bold text-purple-800 bg-purple-100 px-2.5 py-0.5 rounded-full">
@@ -245,6 +298,14 @@ export const SentenceLab: React.FC<SentenceLabProps> = ({ onEarnStar }) => {
           </div>
         </div>
       </div>
+    )}
+
+      {/* Little Grammar Dictionary Section */}
+      {(activeLabTab === 'both' || activeLabTab === 'dictionary') && (
+        <div id="grammar-dictionary-section" className="pt-2">
+          <LittleGrammarDictionary onEarnStar={onEarnStar} />
+        </div>
+      )}
     </div>
   );
 };

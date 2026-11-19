@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { SectionTab } from './types';
+import { SectionTab, StudentProfile } from './types';
 import { Header } from './components/Header';
 import { StoryIntro } from './components/StoryIntro';
 import { GrammarLessons } from './components/GrammarLessons';
@@ -12,7 +12,9 @@ import { ParsingExamples } from './components/ParsingExamples';
 import { QuizSection } from './components/QuizSection';
 import { SentenceLab } from './components/SentenceLab';
 import { PrintableUnit } from './components/PrintableUnit';
+import { StudentProfileView } from './components/StudentProfileView';
 import { CertificateModal } from './components/CertificateModal';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { sounds } from './utils/audio';
 
 export default function App() {
@@ -24,6 +26,34 @@ export default function App() {
     }
     return 3;
   });
+
+  const [profile, setProfile] = useState<StudentProfile>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('ar_student_profile');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          // ignore
+        }
+      }
+    }
+    return {
+      name: 'أَحْمَدُ البَطَلُ',
+      avatar: '👦',
+      grade: 'السَّنَةُ الثَّالِثَةُ ابْتِدَائِيّ',
+      school: 'مَدْرَسَةُ الأَبْطَالِ النُّجَبَاءِ',
+      levelTitle: 'مُحَقِّقُ النَّحْوِ الصَّغِيرُ',
+      totalStars: 3,
+      mcqCompleted: 0,
+      diacriticsCompleted: 0,
+      parsingCompleted: 0,
+      dictionaryLookups: 0,
+      joinedDate: '2026',
+      favoriteWord: 'العُصْفُورُ',
+    };
+  });
+
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [largeFont, setLargeFont] = useState<boolean>(false);
   const [isCertificateOpen, setIsCertificateOpen] = useState<boolean>(false);
@@ -34,6 +64,11 @@ export default function App() {
 
   const handleEarnStar = () => {
     setStarsCount((prev) => prev + 1);
+  };
+
+  const handleUpdateProfile = (updated: StudentProfile) => {
+    setProfile(updated);
+    localStorage.setItem('ar_student_profile', JSON.stringify(updated));
   };
 
   const handleToggleSound = () => {
@@ -58,6 +93,7 @@ export default function App() {
         onToggleSound={handleToggleSound}
         largeFont={largeFont}
         onToggleLargeFont={() => setLargeFont(!largeFont)}
+        profile={profile}
       />
 
       {/* Main Content Area */}
@@ -93,6 +129,16 @@ export default function App() {
         {currentTab === 'lab' && <SentenceLab onEarnStar={handleEarnStar} />}
 
         {currentTab === 'printable' && <PrintableUnit />}
+
+        {currentTab === 'profile' && (
+          <StudentProfileView
+            profile={profile}
+            onUpdateProfile={handleUpdateProfile}
+            starsCount={starsCount}
+            onOpenCertificate={() => setIsCertificateOpen(true)}
+            onEarnStar={handleEarnStar}
+          />
+        )}
       </main>
 
       {/* Certificate Modal */}
@@ -100,7 +146,11 @@ export default function App() {
         isOpen={isCertificateOpen}
         onClose={() => setIsCertificateOpen(false)}
         starsCount={starsCount}
+        studentName={profile.name}
       />
+
+      {/* Offline Status Toast */}
+      <OfflineIndicator />
 
       {/* Child-friendly Footer */}
       <footer className="mt-auto border-t-2 border-stone-200/80 bg-white py-6 px-4 print:hidden">
@@ -171,6 +221,16 @@ export default function App() {
               className="hover:text-amber-700 cursor-pointer text-amber-800 font-black"
             >
               النُّسْخَةُ الوَرَقِيَّةُ 🖨️
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setCurrentTab('profile');
+              }}
+              className="hover:text-amber-700 cursor-pointer text-amber-900 font-black"
+            >
+              المَلَفُّ الشَّخْصِيُّ 👤
             </button>
           </div>
 
